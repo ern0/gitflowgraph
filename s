@@ -1,3 +1,4 @@
 #!/bin/bash
 
-python2 -B gfg.py
+clear
+python2 -B gfg.py /Users/ern0/eco/retest
