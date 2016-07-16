@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 import sys
 import os
-from git import Repo
+from git import *
 
 
 class GitFlowGraph:
@@ -14,21 +14,24 @@ class GitFlowGraph:
 			print("specify directory contains a repository")
 			os._exit(2)
 
-		self.entries = {}
+		self.commits = {}
 
 		for head in self.repo.heads:
-			for entry in head.log():
-				self.store(entry)
+			shead = str(head)
+			shead = "master"
+			for commit in self.repo.iter_commits(shead):
+				self.store(commit,shead)
 
-		for i in self.entries:
-			entry = self.entries[i]
-			print(entry.newhexsha + " - " + entry.message)
+		for i in self.commits:
+			commit = self.commits[i]
+			print(commit.hexsha[0:7] + " - " + commit.message.replace("\n",""))
 
 
-	def store(self,entry):
+	def store(self,commit,head):
 
-		if entry.newhexsha in self.entries: return
-		self.entries[entry.newhexsha] = entry
+		if commit.hexsha not in self.commits: 
+			self.commits[commit.hexsha] = commit
+		self.commits[commit.hexsha].message += " #" + head
 
 
 if __name__ == "__main__":
