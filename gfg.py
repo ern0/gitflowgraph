@@ -4,12 +4,6 @@ import os
 from git import *
 
 
-class Node:
-
-	def dump():
-		pass
-
-
 class GitFlowGraph:
 
 
@@ -23,35 +17,83 @@ class GitFlowGraph:
 		self.nodes = {}
 
 		for head in self.repo.heads:
-			log = head.log()	
-			print("---- " + head.name + "(" + str(len(log)) + ") ----")
-			for refLogItem in log:
+			for refLogItem in head.log():
 				node = Node()
+				node.source = "reflog"
 				node.branch = head.name
 				node.hash = refLogItem.newhexsha
 				node.prev = refLogItem.oldhexsha
 				node.message = refLogItem.message
-				self.store(node)
+				node.store(self.nodes)
 
 		for head in self.repo.heads:
 			for commit in self.repo.iter_commits(head):
 				node = Node()
-				node.branch = "???"
+				node.source = "commit"
+				node.branch = None
 				node.hash = commit.hexsha
 				node.prev = None
+				try: node.prev = commit.parents[0].hexsha
+				except: pass
 				node.message = commit.message
-				self.store(node)
+				node.store(self.nodes)
 
-		for i in self.nodes:
-			node = self.nodes[i]
-			print(node.hash[0:7] + " - " + node.message.replace("\n",""))
+		for hash in self.nodes: 
+			self.nodes[hash].dump()
 
 
-	def store(self,node):
+class Node:
 
-		if node.hash not in self.nodes: 
-			self.nodes[node.hash] = node
-		self.nodes[node.hash].message += " #" + node.branch
+	def __init__(self):
+		self.branches = {}
+
+
+	def regBranch(self,branch):
+		if branch == None: return
+		self.branches[branch] = branch
+
+
+	def store(self,nodes):
+
+		self.message = self.message.replace("\n","")
+
+		if self.source == "commit":
+			self.type = "commit"
+			self.aux = None
+		else:
+			self.type = self.message.split(":")[0].split(" ")[0]
+			self.message = self.message[2 + self.message.index(":"):]
+
+		if self.type not in ["commit","branch","merge"]: return
+
+		if self.hash not in nodes: 
+			nodes[self.hash] = self
+			self.regBranch(self.branch)
+			return
+
+		node = nodes[self.hash]
+		if self.source == "reflog": self.message = node.message
+		if self.prev == None: self.prev = node.prev
+
+
+	def dump(self):
+
+		b = ""
+		for branch in self.branches:
+			b += " #" + branch
+
+		p = ""
+		if self.prev != None: p = "(" + self.prev[0:6] + ")" 
+
+		print(
+			self.type + 
+			": " +
+			self.hash[0:6] +
+			p + 
+			" - " + 
+			self.message +
+			b
+		)
 
 
 if __name__ == "__main__":
