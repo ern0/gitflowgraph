@@ -4,6 +4,12 @@ import os
 from git import *
 
 
+class Node:
+
+	def dump():
+		pass
+
+
 class GitFlowGraph:
 
 
@@ -14,29 +20,38 @@ class GitFlowGraph:
 			print("specify directory contains a repository")
 			os._exit(2)
 
-		self.commits = {}
+		self.nodes = {}
 
 		for head in self.repo.heads:
 			log = head.log()	
 			print("---- " + head.name + "(" + str(len(log)) + ") ----")
-			for logItem in log:
-				print(logItem)
-				break
+			for refLogItem in log:
+				node = Node()
+				node.branch = head.name
+				node.hash = refLogItem.newhexsha
+				node.prev = refLogItem.oldhexsha
+				node.message = refLogItem.message
+				self.store(node)
 
-			#self.store(commit,head.name)
-			continue
+		for head in self.repo.heads:
+			for commit in self.repo.iter_commits(head):
+				node = Node()
+				node.branch = "???"
+				node.hash = commit.hexsha
+				node.prev = None
+				node.message = commit.message
+				self.store(node)
+
+		for i in self.nodes:
+			node = self.nodes[i]
+			print(node.hash[0:7] + " - " + node.message.replace("\n",""))
 
 
-		for i in self.commits:
-			commit = self.commits[i]
-			print(commit.hexsha[0:7] + " - " + commit.message.replace("\n",""))
+	def store(self,node):
 
-
-	def store(self,commit,head):
-
-		if commit.hexsha not in self.commits: 
-			self.commits[commit.hexsha] = commit
-		self.commits[commit.hexsha].message += " #" + head
+		if node.hash not in self.nodes: 
+			self.nodes[node.hash] = node
+		self.nodes[node.hash].message += " #" + node.branch
 
 
 if __name__ == "__main__":
