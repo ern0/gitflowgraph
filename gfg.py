@@ -17,10 +17,13 @@ class GitFlowGraph:
 		self.commits = {}
 
 		for head in self.repo.heads:
-			shead = str(head)
-			shead = "master"
-			for commit in self.repo.iter_commits(shead):
-				self.store(commit,shead)
+			print("---- " + head.name + "----")
+			log = head.log()	
+			print( len(log) )
+
+			#self.store(commit,head.name)
+			continue
+
 
 		for i in self.commits:
 			commit = self.commits[i]
