@@ -17,9 +17,11 @@ class GitFlowGraph:
 		self.commits = {}
 
 		for head in self.repo.heads:
-			print("---- " + head.name + "----")
 			log = head.log()	
-			print( len(log) )
+			print("---- " + head.name + "(" + str(len(log)) + ") ----")
+			for logItem in log:
+				print(logItem)
+				break
 
 			#self.store(commit,head.name)
 			continue
