@@ -33,8 +33,17 @@ class GitFlowGraph:
 				node = self.nodeList[commit.hexsha]
 				node.commit = commit
 
-		for hash in self.nodeList: 
-			self.nodeList[hash].dump()
+		for key in (
+			sorted(
+				self.nodeList.keys()
+				,key = lambda h: self.nodeList[h].commit.committed_datetime
+				,reverse = True
+			)
+		):
+			self.nodeList[key].dump()
+
+		#for hash in self.sortedNodeList: 
+		#	self.sortedNodeList[hash].dump()
 
 
 class Node:
