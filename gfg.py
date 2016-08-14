@@ -76,6 +76,7 @@ class Node:
 
 		print(
 			self.hash[0:6] + "..."
+			+ " - \"" + self.message + "\""
 			+ " - #" + self.branch
 			+ " - " + self.stamp
 			+ " - [" + str(self.getColumn()) + "]"
