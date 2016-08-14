@@ -29,7 +29,11 @@ class GitFlowGraph:
 				node = Node()
 				node.hash = refLogItem.newhexsha
 				node.branch = branch
+<<<<<<< HEAD
 				node.message = refLogItem.message.strip()
+=======
+				node.message = "//" + refLogItem.message.strip()
+>>>>>>> ec01ac953d1a18d91e84ca23fb4be327a9e95f32
 				tm = refLogItem.time[0]
 				tz = refLogItem.time[1]
 				node.stamp = str(datetime.datetime.utcfromtimestamp(tm - tz))
@@ -43,7 +47,11 @@ class GitFlowGraph:
 				except:
 					node = Node()
 					self.nodeList[commit.hexsha] = node
+<<<<<<< HEAD
 					node.branch = branch
+=======
+					node.branch = branch + "?"
+>>>>>>> ec01ac953d1a18d91e84ca23fb4be327a9e95f32
 
 				node.hash = commit.hexsha
 				node.message = commit.message.strip()
