@@ -24,13 +24,14 @@ class GitFlowGraph:
 				node = Node()
 				node.hash = refLogItem.newhexsha
 				node.branch = branch
-				node.message = ""
 				self.nodeList[node.hash] = node
 
 		for head in self.repo.heads:
 			for commit in self.repo.iter_commits(head):
+				#print(dir(commit))
+				#return
 				node = self.nodeList[commit.hexsha]
-				node.message = commit.message
+				node.commit = commit
 
 		for hash in self.nodeList: 
 			self.nodeList[hash].dump()
@@ -42,9 +43,10 @@ class Node:
 	def dump(self):
 
 		print(
-			self.hash[0:6]
-			+ " - " + self.message.strip()
-			+ " #" + self.branch
+			self.hash[0:6] + "..."
+			+ " - " + self.commit.message.strip()
+			+ " - #" + self.branch
+			+ " - " + str(self.commit.committed_datetime)
 		)
 
 
