@@ -29,6 +29,8 @@ class GitFlowGraph:
 				node = Node()
 				node.hash = refLogItem.newhexsha
 				node.branch = branch
+				node.author = str(refLogItem.actor)
+				node.tag = ""
 				node.message = refLogItem.message.strip()
 				tm = refLogItem.time[0]
 				tz = refLogItem.time[1]
@@ -46,9 +48,14 @@ class GitFlowGraph:
 					node.branch = branch
 
 				node.hash = commit.hexsha
+				node.author = str(commit.author)
+				node.tag = ""
 				node.message = commit.message.strip()
 				plus = str(commit.committed_datetime).index("+")
 				node.stamp = str(commit.committed_datetime)[0:plus]
+
+		for tag in self.repo.tags:
+			self.nodeList[str(tag.commit)].tag = tag.name
 
 		for key in (
 			sorted(
@@ -74,10 +81,15 @@ class Node:
 
 	def dump(self):
 
+		if self.tag != "": tagFmt = " - +" + self.tag
+		else: tagFmt = ""
+
 		print(
 			self.hash[0:6] + "..."
 			+ " - \"" + self.message + "\""
 			+ " - #" + self.branch
+			+ tagFmt
+			+ " - @" + self.author
 			+ " - " + self.stamp
 			+ " - [" + str(self.getColumn()) + "]"
 		)

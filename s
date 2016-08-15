@@ -1,4 +1,4 @@
 #!/bin/bash
 
 clear
-python2 -B gfg.py test-flow/
+python2 -B gfg.py test-multifeat/
