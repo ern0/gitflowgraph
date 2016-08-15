@@ -73,8 +73,7 @@ class GitFlowGraph:
 
 	def sortNodes(self):
 
-		self.sortedNodeList = []
-
+		self.decSortedNodeList = []
 		for key in (
 			sorted(
 				self.nodeList.keys()
@@ -82,7 +81,17 @@ class GitFlowGraph:
 				,reverse = True
 			)
 		):
-			self.sortedNodeList.append( self.nodeList[key] )
+			self.decSortedNodeList.append( self.nodeList[key] )
+
+		self.incSortedNodeList = []
+		for key in (
+			sorted(
+				self.nodeList.keys()
+				,key = lambda h: self.nodeList[h].stamp
+				,reverse = False
+			)
+		):
+			self.incSortedNodeList.append( self.nodeList[key] )
 
 
 	def fillBranchTypes(self):
@@ -140,18 +149,51 @@ class GitFlowGraph:
 	def calcFeatParallels(self):
 
 		p = 0
-		for node in self.sortedNodeList:
+		self.maxParallel = 0
+		for node in self.decSortedNodeList:
 			if node.btype != "feature": continue
 			if node.blast: p += 1
 			node.parallel = p
+			if p > self.maxParallel: self.maxParallel = p
 			if node.bfirst: p -= 1
+
+
+	def calcFeatColumns(self):
+
+		slotAllocArray = [False] * self.maxParallel
+		branchColumns = {}
+		column = 0
+
+		for node in self.decSortedNodeList:
+			if node.btype != "feature": 
+				node.column += self.maxParallel
+				continue
+
+			if node.blast:
+				pos = column
+				for i in range(0,self.maxParallel):
+					if slotAllocArray[pos]:
+						pos += 1
+						if pos == self.maxParallel: pos = 0
+						continue
+					else:
+						slotAllocArray[pos] = True
+						break
+				branchColumns[node.branch] = pos
+
+			pos = branchColumns[node.branch]
+			node.column = pos
+
+			if node.bfirst:
+				slotAllocArray[pos] = False
 
 
 	def calcColumns(self):
 
 		self.calcFeatBranchBorders()
 		self.calcFeatParallels()
-		#TODO
+		self.calcFeatColumns()
+
 
 	def main(self):
 		
@@ -162,7 +204,7 @@ class GitFlowGraph:
 		self.fillBranchTypes()
 		self.calcColumns()
 
-		for node in self.sortedNodeList:
+		for node in self.incSortedNodeList:
 			node.dump()
 
 
@@ -173,6 +215,7 @@ class Node:
 		self.bfirst = False
 		self.blast = False
 		self.parallel = 0
+		self.column = -1
 
 
 	def dump(self):
@@ -185,19 +228,26 @@ class Node:
 		if self.blast: bl = "}"
 		else: bl = ""
 
-		if self.btype == "feature": par = " P=" + str(self.parallel)
-		else: par = ""
+		if self.btype == "feature": 
+			par = " P=" + str(self.parallel)
+			col = " C=" + str(self.column)
+		else: 
+			par = ""
+			col = ""
+
+		if self.btype != "feature": return
 
 		print(
 			self.hash[0:6]
-			+ " \"" + self.message + "\""
+			#+ " \"" + self.message + "\""
 			+ " #" + self.branch
 			+ bf + bl
 			+ tagFmt
-			+ " @" + self.author
+			#+ " @" + self.author
 			+ " " + self.stamp
 			+ " [" + self.btype + ":" + str(self.column) + "]"
-			+ par
+			+ par 
+			+ col
 		)
 
 
