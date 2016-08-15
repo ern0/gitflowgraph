@@ -8,6 +8,20 @@ from git import *
 class GitFlowGraph:
 
 
+	def procArgs(self):
+
+		try: self.repo = Repo(sys.argv[1])
+		except NameError:
+			print("requires gitpython module")
+			os._exit(3)
+		except IndexError:
+			print("specify directory contains a repository")
+			os._exit(2)			
+		except:
+			print("not a valid repository")
+			os._exit(2)
+
+
 	def collectNodes(self):
 
 		self.nodeList = {}
@@ -106,12 +120,8 @@ class GitFlowGraph:
 
 
 	def main(self):
-
-		try: self.repo = Repo(sys.argv[1])
-		except:
-			print("specify directory contains a repository")
-			os._exit(2)
-
+		
+		self.procArgs()
 		self.collectNodes()
 		self.collectTags()
 		self.sortNodes()
