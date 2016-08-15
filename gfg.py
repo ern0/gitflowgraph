@@ -38,12 +38,10 @@ class GitFlowGraph:
 
 				node = Node()
 				node.hash = refLogItem.newhexsha
-				node.branch = branch
-				node.bfirst = False
-				node.blast = False
 				node.author = str(refLogItem.actor)
-				node.tag = ""
 				node.message = refLogItem.message.strip()
+				node.branch = branch
+
 				tm = refLogItem.time[0]
 				tz = refLogItem.time[1]
 				node.stamp = str(datetime.datetime.utcfromtimestamp(tm - tz))
@@ -59,12 +57,10 @@ class GitFlowGraph:
 					self.nodeList[commit.hexsha] = node
 					node.branch = branch
 
-				node.bfirst = False
-				node.blast = False
 				node.hash = commit.hexsha
 				node.author = str(commit.author)
-				node.tag = None
 				node.message = commit.message.strip()
+
 				plus = str(commit.committed_datetime).index("+")
 				node.stamp = str(commit.committed_datetime)[0:plus]
 
@@ -111,7 +107,7 @@ class GitFlowGraph:
 				node.column = 0
 
 
-	def calcColumns(self):
+	def calcFeatBranchBorders(self):
 
 		self.featureBranchList = {}
 
@@ -140,8 +136,22 @@ class GitFlowGraph:
 			last = self.nodeList[ b[3] ];
 			last.blast = True
 
-		#print(self.featureBranchList)
 
+	def calcFeatParallels(self):
+
+		p = 0
+		for node in self.sortedNodeList:
+			if node.btype != "feature": continue
+			if node.blast: p += 1
+			node.parallel = p
+			if node.bfirst: p -= 1
+
+
+	def calcColumns(self):
+
+		self.calcFeatBranchBorders()
+		self.calcFeatParallels()
+		#TODO
 
 	def main(self):
 		
@@ -158,6 +168,12 @@ class GitFlowGraph:
 
 class Node:
 
+	def __init__(self):		
+		self.tag = ""
+		self.bfirst = False
+		self.blast = False
+		self.parallel = 0
+
 
 	def dump(self):
 
@@ -169,6 +185,9 @@ class Node:
 		if self.blast: bl = "}"
 		else: bl = ""
 
+		if self.btype == "feature": par = " P=" + str(self.parallel)
+		else: par = ""
+
 		print(
 			self.hash[0:6]
 			+ " \"" + self.message + "\""
@@ -178,6 +197,7 @@ class Node:
 			+ " @" + self.author
 			+ " " + self.stamp
 			+ " [" + self.btype + ":" + str(self.column) + "]"
+			+ par
 		)
 
 
