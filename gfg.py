@@ -8,17 +8,13 @@ from git import *
 class GitFlowGraph:
 
 
-	def main(self):
-
-		try: self.repo = Repo(sys.argv[1])
-		except:
-			print("specify directory contains a repository")
-			os._exit(2)
+	def collectNodes(self):
 
 		self.nodeList = {}
 
 		for head in self.repo.heads:
 			branch = head.name
+
 			for refLogItem in head.log():
 
 				isCommit = False
@@ -49,13 +45,21 @@ class GitFlowGraph:
 
 				node.hash = commit.hexsha
 				node.author = str(commit.author)
-				node.tag = ""
+				node.tag = None
 				node.message = commit.message.strip()
 				plus = str(commit.committed_datetime).index("+")
 				node.stamp = str(commit.committed_datetime)[0:plus]
 
+
+	def collectTags(self):
+
 		for tag in self.repo.tags:
 			self.nodeList[str(tag.commit)].tag = tag.name
+
+
+	def sortNodes(self):
+
+		self.sortedNodeList = []
 
 		for key in (
 			sorted(
@@ -64,24 +68,67 @@ class GitFlowGraph:
 				,reverse = True
 			)
 		):
-			self.nodeList[key].dump()
+			self.sortedNodeList.append( self.nodeList[key] )
+
+
+	def fillBranchTypes(self):
+
+		for i in self.nodeList:
+			node = self.nodeList[i]
+
+			if node.branch.startswith("devel"): 
+				node.btype = "develop"
+				node.column = 1
+			elif node.branch.startswith("release-"): 
+				node.btype = "release"
+				node.column = 2
+			elif node.branch.startswith("hotfix-"): 
+				node.btype = "hotfix"
+				node.column = 3
+			elif node.branch.startswith("master"): 
+				node.btype = "master"
+				node.column = 4
+			else:
+				node.btype = "feature"
+				node.column = 0
+
+
+	def calcColumns(self):
+
+		self.featureBranchList = {}
+
+		for i in self.nodeList:
+			node = self.nodeList[i]
+			# TODO
+			if node.btype != "feature": continue
+
+			#node.dump()
+
+
+	def main(self):
+
+		try: self.repo = Repo(sys.argv[1])
+		except:
+			print("specify directory contains a repository")
+			os._exit(2)
+
+		self.collectNodes()
+		self.collectTags()
+		self.sortNodes()
+		self.fillBranchTypes()
+		self.calcColumns()
+
+
+		for node in self.sortedNodeList:
+			node.dump()
 
 
 class Node:
 
 
-	# columns: feat(1) develop(3) release(5) master(7) hotfix(9) 
-	def getColumn(self):		
-		if self.branch.startswith("devel"): return 3
-		if self.branch.startswith("rel"): return 5
-		if self.branch.startswith("master"): return 7
-		if self.branch.startswith("hotfix"): return 9
-		return 1  # feat
-
-
 	def dump(self):
 
-		if self.tag != "": tagFmt = " - +" + self.tag
+		if self.tag is not None: tagFmt = " - +" + self.tag
 		else: tagFmt = ""
 
 		print(
@@ -91,7 +138,7 @@ class Node:
 			+ tagFmt
 			+ " - @" + self.author
 			+ " - " + self.stamp
-			+ " - [" + str(self.getColumn()) + "]"
+			+ " - [" + self.btype + ":" + str(self.column) + "]"
 		)
 
 
