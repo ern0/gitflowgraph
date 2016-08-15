@@ -39,6 +39,8 @@ class GitFlowGraph:
 				node = Node()
 				node.hash = refLogItem.newhexsha
 				node.branch = branch
+				node.bfirst = False
+				node.blast = False
 				node.author = str(refLogItem.actor)
 				node.tag = ""
 				node.message = refLogItem.message.strip()
@@ -57,6 +59,8 @@ class GitFlowGraph:
 					self.nodeList[commit.hexsha] = node
 					node.branch = branch
 
+				node.bfirst = False
+				node.blast = False
 				node.hash = commit.hexsha
 				node.author = str(commit.author)
 				node.tag = None
@@ -113,10 +117,30 @@ class GitFlowGraph:
 
 		for i in self.nodeList:
 			node = self.nodeList[i]
-			# TODO
 			if node.btype != "feature": continue
 
-			#node.dump()
+			branch = node.branch
+			try: 
+				b = self.featureBranchList[branch]
+			except:
+				b = [node.stamp,node.stamp,node.hash,node.hash]
+				self.featureBranchList[branch] = b
+			if node.stamp < b[0]: 
+				b[0] = node.stamp
+				b[2] = node.hash
+			if node.stamp > b[1]: 
+				b[1] = node.stamp	
+				b[3] = node.hash
+
+		for branch in self.featureBranchList:
+			b = self.featureBranchList[branch]
+			
+			first = self.nodeList[ b[2] ];
+			first.bfirst = True
+			last = self.nodeList[ b[3] ];
+			last.blast = True
+
+		#print(self.featureBranchList)
 
 
 	def main(self):
@@ -127,7 +151,6 @@ class GitFlowGraph:
 		self.sortNodes()
 		self.fillBranchTypes()
 		self.calcColumns()
-
 
 		for node in self.sortedNodeList:
 			node.dump()
@@ -141,14 +164,20 @@ class Node:
 		if self.tag is not None: tagFmt = " - +" + self.tag
 		else: tagFmt = ""
 
+		if self.bfirst: bf = "{"
+		else: bf = ""
+		if self.blast: bl = "}"
+		else: bl = ""
+
 		print(
-			self.hash[0:6] + "..."
-			+ " - \"" + self.message + "\""
-			+ " - #" + self.branch
+			self.hash[0:6]
+			+ " \"" + self.message + "\""
+			+ " #" + self.branch
+			+ bf + bl
 			+ tagFmt
-			+ " - @" + self.author
-			+ " - " + self.stamp
-			+ " - [" + self.btype + ":" + str(self.column) + "]"
+			+ " @" + self.author
+			+ " " + self.stamp
+			+ " [" + self.btype + ":" + str(self.column) + "]"
 		)
 
 
