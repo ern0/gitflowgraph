@@ -1,3 +1,0 @@
-clear
-#git log --all --date=iso --pretty=format:"%H^%ad^%s^%P"
-git log --all --date=iso --pretty=format:"%H^%ad^%s"
