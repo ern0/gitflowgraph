@@ -153,7 +153,6 @@ class GitFlowGraph:
 		for node in self.decSortedNodeList:
 			if node.btype != "feature": continue
 			if node.blast: p += 1
-			node.parallel = p
 			if p > self.maxParallel: self.maxParallel = p
 			if node.bfirst: p -= 1
 
@@ -195,6 +194,136 @@ class GitFlowGraph:
 		self.calcFeatColumns()
 
 
+	def renderStr(self,s):
+		sys.stdout.write(s)
+
+
+	def renderQuoted(self,s):
+		self.renderStr("\"")
+		self.renderStr(s)
+		self.renderStr("\"")
+
+
+	def renderLf(self):
+		self.renderStr("\n")
+
+
+	def renderIndent(self):
+		self.renderStr("  " * self.indentation)
+
+
+	def renderProperty(self,prop,value,isLast = False):
+
+		if type(value) == "bool":
+			if value: value = "true"
+			else: value = "false"
+
+		self.renderIndent()
+		self.renderQuoted(str(prop))
+		self.renderStr(": ")
+		self.renderQuoted(str(value))
+		if not isLast: self.renderStr(",")
+		self.renderLf()
+
+
+	def renderMeta(self):
+
+		dirName = sys.argv[1]
+		if dirName.endswith("/"):
+			dirName = dirName[0 : len(dirName) - 1]
+		repoName = os.path.basename(dirName)
+		self.renderProperty("repo",repoName)
+
+		self.renderProperty("columns",4 + self.maxParallel)
+		self.renderProperty("rows",len(self.nodeList),True)
+
+
+	def renderNode(self,node):
+
+		self.renderProperty("hash",node.hash)
+		self.renderProperty("parent1","TODO")
+		self.renderProperty("parent2","TODO")
+		self.renderProperty("column",node.column)
+		self.renderProperty("stamp",node.stamp)
+		self.renderProperty("message",node.message)
+		self.renderProperty("author",node.author)
+		if node.tag != "": self.renderProperty("tag",node.tag)
+		self.renderProperty("branch",node.branch)
+		self.renderProperty("btype",node.btype,True)
+
+
+	def renderList(self):
+
+		self.renderIndent()
+		self.renderStr("[")
+		self.renderLf()
+		self.indentation += 1
+
+		for node in self.decSortedNodeList:
+			node.last = True
+			break
+
+		for node in self.incSortedNodeList:
+			self.renderIndent()
+			self.renderStr("{")
+			self.renderLf()
+			self.indentation += 1
+
+			self.renderNode(node)
+
+			self.indentation -= 1
+			self.renderIndent()
+			self.renderStr("}")
+			if not node. last: self.renderStr(",")
+			self.renderLf()
+		
+		self.indentation -= 1
+		self.renderIndent()
+		self.renderStr("]")
+		self.renderLf()
+
+
+	def renderResult(self):
+		
+		self.indentation = 0
+		
+		self.renderIndent()
+		self.renderStr("{")
+		self.renderLf()
+		self.indentation += 1
+
+		self.renderIndent()
+		self.renderQuoted("meta")
+		self.renderStr(": {")
+		self.renderLf()
+		self.indentation += 1
+
+		self.renderMeta()
+
+		self.indentation -= 1
+		self.renderIndent()
+		self.renderStr("},")
+		self.renderLf()
+
+		self.renderIndent()
+		self.renderQuoted("list")
+		self.renderStr(": {")
+		self.renderLf()
+		self.indentation += 1
+
+		self.renderList()
+
+		self.indentation -= 1
+		self.renderIndent()
+		self.renderStr("}")
+		self.renderLf()
+
+		self.indentation -= 1
+		self.renderIndent()
+		self.renderStr("}")
+		self.renderLf();
+
+
 	def main(self):
 		
 		self.procArgs()
@@ -204,17 +333,17 @@ class GitFlowGraph:
 		self.fillBranchTypes()
 		self.calcColumns()
 
-		for node in self.incSortedNodeList:
-			node.dump()
+		self.renderResult()
 
 
 class Node:
 
 	def __init__(self):		
+		self.last = False
 		self.tag = ""
 		self.bfirst = False
 		self.blast = False
-		self.parallel = 0
+		self.maxParallel = 0
 		self.column = -1
 
 
@@ -229,7 +358,7 @@ class Node:
 		else: bl = ""
 
 		if self.btype == "feature": 
-			par = " P=" + str(self.parallel)
+			par = " P=" + str(self.maxParallel)
 			col = " C=" + str(self.column)
 		else: 
 			par = ""
