@@ -1,0 +1,11 @@
+<ol class="git-tree">
+	{{ #nodes }}
+	<li id="{{ hash }}" class="git-node git-branch-{{ branchType }}" data-column="{{ column }}" data-parent="{{ parentHash }}" data-branch="{{ branch }}">
+		<div class="git-node-data">
+			<span class="git-author">{{ author }}</span>
+			<span class="git-message">{{ message }}</span>
+			<time datetime="{{ timestamp }}"></time>
+		</div>
+	</li>
+	{{ /nodes }}
+</ol>

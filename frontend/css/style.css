@@ -1,0 +1,85 @@
+* {
+	box-sizing: border-box;
+}
+
+.git-tree {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.git-node {
+	float: left;
+	clear: left;
+	position: relative;
+	margin-bottom: 2em;
+	margin-left: 2em;
+	width: 6em;
+	text-align: center;
+}
+
+.git-node:before {
+	display: block;
+	content: attr(id);
+	background-color: navy;
+	border: 2px solid black;
+	color: black;
+	padding: 0.5em 1em;
+	border-radius: 10px;
+}
+
+.git-branch-feature:before {
+	background-color: #ff6cc1;
+}
+
+.git-branch-dev:before {
+	background-color: #ffe500;
+}
+
+.git-branch-master:before {
+	background-color: #00e4fa;
+}
+
+.git-branch-hotfix:before {
+	background-color: #fe5862;
+}
+
+.git-branch-release:before {
+	background-color: #4cc400;
+}
+
+.git-node-data {
+	position: absolute;
+	left: 100%;
+	margin-left: 1em;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.3s ease;
+}
+
+.git-node:hover .git-node-data {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.arrow {
+	position: absolute;
+	border: 1px solid black;
+	top: 100%;
+	left: 50%;
+	z-index: 100;
+	transform-origin: top left;
+}
+
+.arrow:after {
+	content: '';
+	position: absolute;
+	bottom: -1px;
+	right: 0;
+	margin: 0 -8px 0 0;
+	width: 0; 
+	height: 0; 
+	border-left: 8px solid transparent;
+	border-right: 8px solid transparent;
+	border-top: 8px solid black;
+}

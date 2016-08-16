@@ -1,0 +1,24 @@
+{
+  "name": "drawgit",
+  "description": "",
+  "dependencies": {
+    "requirejs": "latest",
+    "underscore": "latest",
+    "mustache.js": "mustache#^2.2.1",
+    "text": "requirejs-text#^2.0.15"
+  },
+  "main": "index.js",
+  "authors": [
+    "Richard Nagy <nr@ecostudio.hu>"
+  ],
+  "license": "ISC",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
