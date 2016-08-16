@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+
+<link href="css/style.css" rel="stylesheet">
+
+<div id="drawhere"></div>
+
+<script>
+	var gitJson = [
+		{
+			"hash": "abc123",
+			"parentHash": null,
+			"parentMergeHash": "",
+			"column": 1,
+			"timestamp": "",
+			"message": "bazze",
+			"author": "jozsi",
+			"tag": "",
+			"branch": "feature-hello",
+			"branchType": "feature",
+			"isHead": false
+		},
+		{
+			"hash": "abc234",
+			"parentHash": "abc123",
+			"parentMergeHash": "",
+			"column": 1,
+			"timestamp": "",
+			"message": "bazze bazze bazze",
+			"author": "tibor",
+			"tag": "",
+			"branch": "feature-hello",
+			"branchType": "feature",
+			"isHead": false
+		},
+		{
+			"hash": "abc456",
+			"parentHash": "abc234",
+			"parentMergeHash": "",
+			"column": 1,
+			"timestamp": "",
+			"message": "dsjfhnsdjfjsdhfjsdhfjsdhfjsdhj",
+			"author": "tibor",
+			"tag": "",
+			"branch": "feature-hello",
+			"branchType": "feature",
+			"isHead": false
+		},
+		{
+			"hash": "def123",
+			"parentHash": "abc456",
+			"parentMergeHash": "",
+			"column": 2,
+			"timestamp": "",
+			"message": "1 2 3 4 5 6",
+			"author": "jozsi",
+			"tag": "",
+			"branch": "dev",
+			"branchType": "dev",
+			"isHead": false
+		},
+		{
+			"hash": "def234",
+			"parentHash": "def123",
+			"parentMergeHash": "",
+			"column": 2,
+			"timestamp": "",
+			"message": "nesze neked",
+			"author": "andrej",
+			"tag": "baszod",
+			"branch": "dev",
+			"branchType": "dev",
+			"isHead": false
+		},
+		{
+			"hash": "def456",
+			"parentHash": "def234",
+			"parentMergeHash": "",
+			"column": 1,
+			"timestamp": "",
+			"message": "mivan mivan mivan mivan",
+			"author": "tibor",
+			"tag": "",
+			"branch": "feature-na",
+			"branchType": "feature",
+			"isHead": false
+		},
+		{
+			"hash": "def789",
+			"parentHash": "def456",
+			"parentMergeHash": "",
+			"column": 3,
+			"timestamp": "",
+			"message": "bumm",
+			"author": "andrej",
+			"tag": "",
+			"branch": "master",
+			"branchType": "master",
+			"isHead": true
+		},
+	];
+</script>
+
+<script src="js/vendor/require.js"></script>
+<script src="js/require_config.js"></script>
+<script>
+	require.config({ baseUrl: 'js' });
+	require(['main']);
+</script>
