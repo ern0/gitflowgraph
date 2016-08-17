@@ -38,6 +38,8 @@ class GitFlowGraph:
 
 				node = Node()
 				node.hash = str(refLogItem.newhexsha)
+				node.parent1 = str(refLogItem.oldhexsha)
+				if node.parent1.replace("0","") == "": node.parent1 = ""
 				node.author = str(refLogItem.actor)
 				node.message = str(refLogItem.message).strip()
 				node.branch = str(branch)
@@ -58,6 +60,8 @@ class GitFlowGraph:
 					node.branch = str(branch)
 
 				node.hash = str(commit.hexsha)
+				if len(commit.parents) > 0: node.parent1 = commit.parents[0]
+				if len(commit.parents) > 1: node.parent2 = commit.parents[1]
 				node.author = str(commit.author)
 				node.message = str(commit.message).strip()
 
@@ -214,6 +218,8 @@ class GitFlowGraph:
 
 	def renderProperty(self,prop,value,isLast = False):
 
+		if value == "": return
+
 		if type(value) == "bool":
 			if value: value = "true"
 			else: value = "false"
@@ -244,13 +250,13 @@ class GitFlowGraph:
 	def renderNode(self,node):
 
 		self.renderProperty("hash",node.hash)
-		self.renderProperty("parent1","TODO")
-		self.renderProperty("parent2","TODO")
+		self.renderProperty("parent1",node.parent1)
+		self.renderProperty("parent2",node.parent2)
 		self.renderProperty("column",node.column)
 		self.renderProperty("stamp",node.stamp)
 		self.renderProperty("message",node.message)
 		self.renderProperty("author",node.author)
-		if node.tag != "": self.renderProperty("tag",node.tag)
+		self.renderProperty("tag",node.tag)
 		self.renderProperty("branch",node.branch)
 		self.renderProperty("btype",node.btype,True)
 
@@ -333,6 +339,8 @@ class Node:
 
 	def __init__(self):		
 		self.last = False
+		self.parent1 = ""
+		self.parent2 = ""
 		self.tag = ""
 		self.bfirst = False
 		self.blast = False
