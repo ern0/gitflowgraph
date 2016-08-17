@@ -191,11 +191,36 @@ class GitFlowGraph:
 				slotAllocArray[pos] = False
 
 
+	def removeEmptyColumns(self):
+
+		cols = 5 + self.maxParallel
+
+		columnUsage = [False] * cols
+		for i in self.nodeList:
+			node = self.nodeList[i]
+			columnUsage[node.column] = True
+
+		columnUsage[5] = False
+
+		columnShift = [0] * cols
+		shift = 0
+		for i in range(0,cols):
+			columnShift[i] = shift
+			if columnUsage[i]: continue
+			columnShift[i] = -1
+			shift += 1
+
+		for i in self.nodeList:
+			node = self.nodeList[i]
+			node.column -= columnShift[node.column]
+
+
 	def calcColumns(self):
 
 		self.calcFeatBranchBorders()
 		self.calcFeatParallels()
 		self.calcFeatColumns()
+		self.removeEmptyColumns()
 
 
 	def renderStr(self,s):
