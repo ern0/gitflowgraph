@@ -254,11 +254,6 @@ class GitFlowGraph:
 
 	def renderList(self):
 
-		self.renderIndent()
-		self.renderStr("[")
-		self.renderLf()
-		self.indentation += 1
-
 		for node in self.decSortedNodeList:
 			node.last = True
 			break
@@ -277,11 +272,6 @@ class GitFlowGraph:
 			if not node. last: self.renderStr(",")
 			self.renderLf()
 		
-		self.indentation -= 1
-		self.renderIndent()
-		self.renderStr("]")
-		self.renderLf()
-
 
 	def renderResult(self):
 		
@@ -307,7 +297,7 @@ class GitFlowGraph:
 
 		self.renderIndent()
 		self.renderQuoted("list")
-		self.renderStr(": {")
+		self.renderStr(": [")
 		self.renderLf()
 		self.indentation += 1
 
@@ -315,7 +305,7 @@ class GitFlowGraph:
 
 		self.indentation -= 1
 		self.renderIndent()
-		self.renderStr("}")
+		self.renderStr("]")
 		self.renderLf()
 
 		self.indentation -= 1
