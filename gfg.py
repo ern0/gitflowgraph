@@ -37,10 +37,10 @@ class GitFlowGraph:
 				if not isCommit: continue 
 
 				node = Node()
-				node.hash = refLogItem.newhexsha
+				node.hash = str(refLogItem.newhexsha)
 				node.author = str(refLogItem.actor)
-				node.message = refLogItem.message.strip()
-				node.branch = branch
+				node.message = str(refLogItem.message).strip()
+				node.branch = str(branch)
 
 				tm = refLogItem.time[0]
 				tz = refLogItem.time[1]
@@ -55,11 +55,11 @@ class GitFlowGraph:
 				except:
 					node = Node()
 					self.nodeList[commit.hexsha] = node
-					node.branch = branch
+					node.branch = str(branch)
 
-				node.hash = commit.hexsha
+				node.hash = str(commit.hexsha)
 				node.author = str(commit.author)
-				node.message = commit.message.strip()
+				node.message = str(commit.message).strip()
 
 				plus = str(commit.committed_datetime).index("+")
 				node.stamp = str(commit.committed_datetime)[0:plus]
@@ -221,7 +221,10 @@ class GitFlowGraph:
 		self.renderIndent()
 		self.renderQuoted(str(prop))
 		self.renderStr(": ")
-		self.renderQuoted(str(value))
+		if type(value) == str:
+			self.renderQuoted(value)
+		else:
+			self.renderStr(str(value))
 		if not isLast: self.renderStr(",")
 		self.renderLf()
 
