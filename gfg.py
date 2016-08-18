@@ -60,8 +60,8 @@ class GitFlowGraph:
 					node.branch = str(branch)
 
 				node.hash = str(commit.hexsha)
-				if len(commit.parents) > 0: node.parent1 = commit.parents[0]
-				if len(commit.parents) > 1: node.parent2 = commit.parents[1]
+				if len(commit.parents) > 0: node.parent1 = str(commit.parents[0])
+				if len(commit.parents) > 1: node.parent2 = str(commit.parents[1])
 				node.author = str(commit.author)
 				node.message = str(commit.message).strip()
 
