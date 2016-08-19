@@ -61,12 +61,11 @@ class GitFlowGraph:
 			os._exit(2)
 
 
-
 	def dump(self):
 		for node in self.decSortedNodeList:
 			node.dump()
-		print("max. parallel feat: " + str(self.maxParallel) + " (")
-
+		print("max. parallel feat: " + str(self.maxParallel) + " ")
+		#TODO: print out some more info
 
 
 	def collectNodes(self):
@@ -462,7 +461,7 @@ class WebProc(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
 
 	def log_message(self,format,*args):
-		return
+		pass
 
 
 	def do_GET(self):
