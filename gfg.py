@@ -2,7 +2,43 @@
 import sys
 import os
 import datetime
+import BaseHTTPServer 
 from git import *
+
+
+class Node:
+
+	def __init__(self):		
+		self.last = False
+		self.parent1 = ""
+		self.parent2 = ""
+		self.tag = ""
+		self.bfirst = False
+		self.blast = False
+		self.maxParallel = 0
+		self.column = -1
+
+
+	def dump(self):
+
+		if self.tag != "": tagFmt = " +" + self.tag
+		else: tagFmt = ""
+
+		if self.bfirst: bf = "{"
+		else: bf = ""
+		if self.blast: bl = "}"
+		else: bl = ""
+
+		print(
+			self.hash[0:6]
+			#+ " \"" + self.message + "\""
+			+ " #" + self.branch
+			+ bf + bl
+			+ tagFmt
+			#+ " @" + self.author
+			+ " " + self.stamp
+			+ " [" + self.btype + ":" + str(self.column) + "]"
+		)
 
 
 class GitFlowGraph:
@@ -10,7 +46,9 @@ class GitFlowGraph:
 
 	def procArgs(self):
 
-		try: self.repo = Repo(sys.argv[1])
+		try: 
+			self.repoName = sys.argv[1]
+			self.repo = Repo(self.repoName)
 		except NameError:
 			print("requires gitpython module")
 			os._exit(3)
@@ -20,6 +58,14 @@ class GitFlowGraph:
 		except:
 			print("not a valid repository")
 			os._exit(2)
+
+
+
+	def dump(self):
+		for node in self.decSortedNodeList:
+			node.dump()
+		print("max. parallel feat: " + str(self.maxParallel) + " (")
+
 
 
 	def collectNodes(self):
@@ -224,7 +270,7 @@ class GitFlowGraph:
 
 
 	def renderStr(self,s):
-		sys.stdout.write(s)
+		self.renderFile.write(s)
 
 
 	def renderQuoted(self,s):
@@ -262,7 +308,7 @@ class GitFlowGraph:
 
 	def renderMeta(self):
 
-		dirName = sys.argv[1]
+		dirName = self.repoName
 		if dirName.endswith("/"):
 			dirName = dirName[0 : len(dirName) - 1]
 		repoName = os.path.basename(dirName)
@@ -307,7 +353,9 @@ class GitFlowGraph:
 			self.renderLf()
 		
 
-	def renderResult(self):
+	def renderResult(self,fd):
+
+		self.renderFile = fd
 		
 		self.indentation = 0
 		
@@ -348,62 +396,74 @@ class GitFlowGraph:
 		self.renderLf();
 
 
-	def main(self):
-		
-		self.procArgs()
+	def perform(self):
+
 		self.collectNodes()
 		self.collectTags()
 		self.sortNodes()
 		self.fillBranchTypes()
 		self.calcColumns()
 
-		self.renderResult()
+
+	def runWebServer(self):
+
+		fail = True
+		for port in range(9312,9412):
+			try: 
+				server = BaseHTTPServer.HTTPServer(("",port),WebServer)
+				fail = False
+				break
+			except: 
+				pass
+		if fail:
+			print("can not start webserver")
+			os._exit(2)
+
+		url = "http://localhost:" + str(port) + "/"
+		print("click this: " + url)
+		server.app = self
+		server.serve_forever()
 
 
-class Node:
+	def main(self):
+		
+		self.procArgs()
 
-	def __init__(self):		
-		self.last = False
-		self.parent1 = ""
-		self.parent2 = ""
-		self.tag = ""
-		self.bfirst = False
-		self.blast = False
-		self.maxParallel = 0
-		self.column = -1
+		try:
+			dumpMode = False
+			if sys.argv[2] == "dump": dumpMode = True
+		except: pass
+		if dumpMode:
+			self.perform()
+			self.dump()
+			return
+
+		self.runWebServer()
 
 
-	def dump(self):
 
-		if self.tag is not None: tagFmt = " - +" + self.tag
-		else: tagFmt = ""
+class WebServer(BaseHTTPServer.BaseHTTPRequestHandler):
 
-		if self.bfirst: bf = "{"
-		else: bf = ""
-		if self.blast: bl = "}"
-		else: bl = ""
 
-		if self.btype == "feature": 
-			par = " P=" + str(self.maxParallel)
-			col = " C=" + str(self.column)
-		else: 
-			par = ""
-			col = ""
+	def xxlog_message(self,format,*args):
+		return
 
-		if self.btype != "feature": return
 
-		print(
-			self.hash[0:6]
-			#+ " \"" + self.message + "\""
-			+ " #" + self.branch
-			+ bf + bl
-			+ tagFmt
-			#+ " @" + self.author
-			+ " " + self.stamp
-			+ " [" + self.btype + ":" + str(self.column) + "]"
-			+ par 
-			+ col
-		)
+	def do_GET(self):
+
+		if self.path.endswith(".ico"):
+			self.send_response(404,"Not Found")
+			self.send_header("Content-type","text/html")
+			self.end_headers()
+			self.wfile.write("<h2>404 Not Found</h2>")
+			return
+
+		if self.path.endswith("fetch"):
+			self.send_response(200,"OK")
+			self.send_header("Content-type","application/json")
+			self.end_headers()
+			self.server.app.perform()
+			self.server.app.renderResult(self.wfile)
 
 
 if __name__ == "__main__":
