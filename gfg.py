@@ -2,7 +2,8 @@
 import sys
 import os
 import datetime
-import BaseHTTPServer 
+import SocketServer
+import SimpleHTTPServer 
 from git import *
 
 
@@ -410,7 +411,7 @@ class GitFlowGraph:
 		fail = True
 		for port in range(9312,9412):
 			try: 
-				server = BaseHTTPServer.HTTPServer(("",port),WebServer)
+				server = WebServer(("0.0.0.0",port),WebProc)
 				fail = False
 				break
 			except: 
@@ -421,8 +422,15 @@ class GitFlowGraph:
 
 		url = "http://localhost:" + str(port) + "/"
 		print("click this: " + url)
+		server.allow_reuse_address = True
 		server.app = self
-		server.serve_forever()
+
+		try:
+			server.serve_forever()
+		except KeyboardInterrupt:
+			print(" - interrupted")
+			server.shutdown()
+			os._exit(0)
 
 
 	def main(self):
@@ -441,22 +449,23 @@ class GitFlowGraph:
 		self.runWebServer()
 
 
+class WebServer(SocketServer.ThreadingTCPServer):
 
-class WebServer(BaseHTTPServer.BaseHTTPRequestHandler):
+	allow_reuse_address = True
 
 
-	def xxlog_message(self,format,*args):
+class WebProc(SimpleHTTPServer.SimpleHTTPRequestHandler):
+
+	def __init__(self,req,clientAddress,server):
+		SimpleHTTPServer.SimpleHTTPRequestHandler.__init__(self,req,clientAddress,server)
+		self.server = server
+
+
+	def log_message(self,format,*args):
 		return
 
 
 	def do_GET(self):
-
-		if self.path.endswith(".ico"):
-			self.send_response(404,"Not Found")
-			self.send_header("Content-type","text/html")
-			self.end_headers()
-			self.wfile.write("<h2>404 Not Found</h2>")
-			return
 
 		if self.path.endswith("fetch"):
 			self.send_response(200,"OK")
@@ -464,6 +473,10 @@ class WebServer(BaseHTTPServer.BaseHTTPRequestHandler):
 			self.end_headers()
 			self.server.app.perform()
 			self.server.app.renderResult(self.wfile)
+
+		else:
+			if self.path == "/": self.path = "/frontend"
+			SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
 
 
 if __name__ == "__main__":
