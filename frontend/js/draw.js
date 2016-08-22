@@ -20,6 +20,12 @@ define([
 		if (parentElem) drawArrow(getBadge(node), getBadge(parentElem), className);
 	};
 
+	var deleteBySelector = function (elem, sel) {
+		_(elem.querySelectorAll(sel)).each(function (arrow) {
+			arrow.parentNode.removeChild(arrow);
+		});
+	};
+
 	var setPositions = function (domElement, columns) {
 		var nodes = domElement.querySelectorAll('.git-node');
 		var badge = getBadge(nodes[0]);
@@ -36,6 +42,8 @@ define([
 
 		var margin = (boxUsableWidth - (columns * badgeWidth)) / (columns - 1);
 
+		deleteBySelector(domElement, '.arrow');
+
 		_(nodes).each(function (node) {
 			var column = node.getAttribute('data-column');
 
@@ -45,6 +53,8 @@ define([
 			processArrow(node, 'data-parent', '');
 			processArrow(node, 'data-parent2', 'merge');
 		});
+
+		deleteBySelector(domElement, '.column-indicator');
 
 		for (var i = 0; i < columns; i++) {
 			var sep = document.createElement('li');
@@ -80,6 +90,10 @@ define([
 			setPositions(domElement, data.meta.columns);
 			
 			window.localStorage.setItem('lastView', cList.contains('sideview') ? '1' : '0');
+		});
+
+		window.addEventListener('resize', function () {
+			setPositions(domElement, data.meta.columns);
 		});
 	};
 
