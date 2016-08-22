@@ -9,13 +9,19 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "autoprefixer": "^6.4.0",
     "bower": "latest",
+    "csswring": "^5.1.0",
     "glob": "latest",
     "grunt": "latest",
     "grunt-bower": "latest",
     "grunt-contrib-jshint": "latest",
     "grunt-contrib-requirejs": "latest",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-postcss": "^0.8.0",
+    "grunt-sass": "^1.2.1",
     "load-grunt-tasks": "latest",
+    "pixrem": "^3.0.1",
     "requirejs": "latest"
   }
 }

@@ -17,9 +17,14 @@ module.exports = function(grunt) {
 		'requirejs'
 	]);
 
+	grunt.registerTask('css', [
+		'sass'
+	]);
+
 	grunt.registerTask('setup', [
 		'clean:jslib',
-		'bower'
+		'bower',
+		'css'
 	]);
 
 	function loadConfig(path) {
