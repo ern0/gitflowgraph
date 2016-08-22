@@ -66,11 +66,20 @@ define([
 		});
 
 		domElement.innerHTML = Mustache.render(treeTmpl, data);
+
+		if (window.localStorage.getItem('lastView') === '1') {
+			document.querySelector('.git-repo').classList.add('sideview');
+		}
 		
 		setPositions(domElement, data.meta.columns);
 
 		document.querySelector('.switch-view').addEventListener('click', function () {
-			document.querySelector('.git-repo').classList.toggle('sideview');
+			var cList = document.querySelector('.git-repo').classList;
+			cList.toggle('sideview');
+
+			setPositions(domElement, data.meta.columns);
+			
+			window.localStorage.setItem('lastView', cList.contains('sideview') ? '1' : '0');
 		});
 	};
 
