@@ -33,6 +33,7 @@ body {
 	white-space: nowrap;
 	@extend %clearfix;
 	perspective: 1000;
+	border-bottom: 1px solid #ddd;
 
 	@each $name, $color in $badgeColors {
 		&.git-branch-#{$name} {
@@ -100,6 +101,7 @@ body {
 	float: right;
 	transition: opacity 0.3s ease;
 	width: 29%;
+	padding-left: 1em;
 	position: absolute;
 
 	.sideview & {
@@ -109,6 +111,7 @@ body {
 
 	.git-message {
 		white-space: normal;
+		margin-bottom: 0.5em;
 	}
 }
 

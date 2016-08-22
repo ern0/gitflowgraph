@@ -34,7 +34,8 @@ body {
 .git-node {
   padding: 1em 2em;
   white-space: nowrap;
-  perspective: 1000; }
+  perspective: 1000;
+  border-bottom: 1px solid #ddd; }
   .git-node.git-branch-master {
     background-color: rgba(0, 228, 250, 0.2); }
   .git-node.git-branch-develop {
@@ -114,12 +115,14 @@ body {
   float: right;
   transition: opacity 0.3s ease;
   width: 29%;
+  padding-left: 1em;
   position: absolute; }
   .sideview .git-sideview-data {
     opacity: 1;
     position: static; }
   .git-sideview-data .git-message {
-    white-space: normal; }
+    white-space: normal;
+    margin-bottom: 0.5em; }
 
 .git-node-data span, .git-node-data time,
 .git-sideview-data span,
