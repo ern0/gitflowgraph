@@ -13,13 +13,35 @@
   box-sizing: border-box; }
 
 body {
-  margin: 0; }
+  margin: 0;
+  background-color: white;
+  font-family: Garamond, Baskerville, "Baskerville Old Face", "Hoefler Text", "Times New Roman", serif; }
 
 .git-repo {
   position: relative;
-  overflow: hidden; }
+  overflow: hidden;
+  border: 1px solid #333;
+  background-color: #eee; }
   .git-repo h1 {
-    text-align: center; }
+    text-align: center;
+    margin: 0;
+    padding: 1em 0;
+    border-bottom: 1px solid #bbb; }
+  .git-repo button {
+    border: 2px solid navy;
+    border-radius: 10px;
+    padding: 8px 14px;
+    background-color: white;
+    color: navy;
+    font-weight: bold;
+    font-size: 0.9em;
+    cursor: pointer;
+    outline: none;
+    transition: color 0.3s ease, background-color 0.3s ease;
+    box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.3); }
+    .git-repo button:hover, .git-repo button:active, .git-repo button:focus {
+      background-color: navy;
+      color: white; }
   .git-repo .switch-view {
     position: absolute;
     top: 1em;
@@ -29,7 +51,8 @@ body {
   list-style: none;
   padding: 0;
   margin: 0;
-  position: relative; }
+  position: relative;
+  box-shadow: inset 2px 2px 4px 0px rgba(0, 0, 0, 0.3); }
 
 .git-node {
   padding: 1em 2em;
@@ -58,7 +81,8 @@ body {
   border: 2px solid black;
   border-radius: 50%;
   cursor: pointer;
-  font-weight: bold; }
+  font-weight: bold;
+  box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.3); }
   .git-branch-master .git-node-badge {
     background-color: #00e4fa;
     border-color: #005861; }
@@ -86,6 +110,7 @@ body {
   border-radius: 10px;
   padding: 0 0.5em;
   opacity: 1;
+  box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.3);
   transform-style: preserve-3d;
   transform: none;
   transform-origin: left center;
