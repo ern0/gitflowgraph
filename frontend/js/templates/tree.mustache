@@ -1,11 +1,25 @@
-<ol class="git-tree">
-	{{ #nodes }}
-	<li id="{{ hash }}" class="git-node git-branch-{{ branchType }}" data-column="{{ column }}" data-parent="{{ parentHash }}" data-branch="{{ branch }}">
-		<div class="git-node-data">
-			<span class="git-author">{{ author }}</span>
-			<span class="git-message">{{ message }}</span>
-			<time datetime="{{ timestamp }}"></time>
-		</div>
-	</li>
-	{{ /nodes }}
-</ol>
+<article class="git-repo">
+	<h1>Repo: {{ meta.repo }}</h1>
+	<button class="switch-view">Switch view</button>
+	<ol class="git-tree">
+		{{ #list }}
+		<li id="{{ hash }}" class="git-node git-branch-{{ btype }}" data-column="{{ column }}" data-parent="{{ parent1 }}" data-parent2="{{ parent2 }}" data-branch="{{ branch }}">
+			<div class="git-node-badge">
+				{{ #hash }}{{ shortenHash }}{{ /hash }}
+			</div>
+			<div class="git-node-data">
+				<span class="git-message">{{ message }}</span>
+				<span class="git-branch">{{ branch }}</span>
+				<span class="git-author">{{ author }}</span>
+				<time datetime="{{ #stamp }}{{ timestampRFC3339 }}{{ /stamp }}">{{ stamp }}</time>
+			</div>
+			<div class="git-sideview-data">
+				<span class="git-message">{{ message }}</span>
+				<span class="git-branch">{{ branch }}</span>
+				<span class="git-author">{{ author }}</span>
+				<time datetime="{{ #stamp }}{{ timestampRFC3339 }}{{ /stamp }}">{{ stamp }}</time>
+			</div>
+		</li>
+		{{ /list }}
+	</ol>
+</article>
