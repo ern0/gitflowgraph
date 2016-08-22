@@ -1,5 +1,7 @@
-require(['draw'], function (draw) {
+require(['loadJSON', 'draw'], function (loadJSON, draw) {
 
-	draw(document.getElementById('drawhere'), gitJson, {});
+	loadJSON('/fetch', function (data) {
+		draw(document.getElementById('drawhere'), data, {});
+	});
 
 });
