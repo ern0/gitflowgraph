@@ -1,0 +1,17 @@
+@function z($layer) {
+	@return map-get($zIndexes, $layer);
+}
+
+%ellipsis {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+%clearfix {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}

@@ -1,0 +1,192 @@
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+}
+
+.git-repo {
+	position: relative;
+	overflow: hidden;
+
+	h1 {
+		text-align: center;
+	}
+
+	.switch-view {
+		position: absolute;
+		top: 1em;
+		right: 1em;
+	}
+}
+
+.git-tree {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	position: relative;
+}
+
+.git-node {
+	padding: ($spacing / 2) 2em;
+	white-space: nowrap;
+	@extend %clearfix;
+	perspective: 1000;
+
+	@each $name, $color in $badgeColors {
+		&.git-branch-#{$name} {
+			background-color: rgba($color, 0.2);
+		}
+	}
+}
+
+.git-node-badge {
+	position: relative;
+	z-index: z('badge');
+	display: inline-block;
+	padding: 0.5em;
+	text-align: center;
+	width: $badgeWidth;
+	margin-left: $spacing;
+
+	border: 2px solid black;
+	border-radius: 50%;
+	cursor: pointer;
+	font-weight: bold;
+
+	@each $name, $color in $badgeColors {
+		.git-branch-#{$name} & {
+			background-color: $color;
+			border-color: darken($color, 30%);
+		}
+	}
+}
+
+.git-node-data {
+	display: inline-block;
+	position: relative;
+	z-index: z('data');
+	max-width: 30%;
+
+	vertical-align: middle;
+	line-height: 1.25;
+	border: 2px solid black;
+	border-radius: 10px;
+	padding: 0 0.5em;
+	opacity: 1;
+
+	transform-style: preserve-3d;
+	transform: none;
+	transform-origin: left center;
+	transition: transform 0.3s ease, opacity 0.3s ease;
+
+	.sideview & {
+		opacity: 0;
+		transform: rotateY(90deg);
+		position: absolute;
+	}
+
+	@each $name, $color in $badgeColors {
+		.git-branch-#{$name} & {
+			background-color: rgba(lighten($color, 30%), 0.75);
+			border-color: rgba(darken($color, 30%), 0.75);
+		}
+	}
+}
+
+.git-sideview-data {
+	opacity: 0;
+	float: right;
+	transition: opacity 0.3s ease;
+	width: 29%;
+	position: absolute;
+
+	.sideview & {
+		opacity: 1;
+		position: static;
+	}
+
+	.git-message {
+		white-space: normal;
+	}
+}
+
+.git-node-data,
+.git-sideview-data {
+	@extend %ellipsis;
+
+	span, time {
+		vertical-align: middle;
+
+		&:before {
+			font-style: italic;
+		}
+	}
+
+	.git-message,
+	.git-branch {
+		display: block;
+	}
+
+	.git-branch:before {
+		content: 'branch: ';
+	}
+
+	.git-author:before {
+		content: 'by: ';
+	}
+
+	time {
+		font-size: 0.75em;
+
+		&:before {
+			content: '@ ';
+		}
+	}
+}
+
+.arrow {
+	position: absolute;
+	border: 1px solid $arrowColor;
+	top: 100%;
+	left: 50%;
+	z-index: z('arrow');
+	transform-origin: top center;
+	margin-top: 2px;
+
+	&:after {
+		content: '';
+		position: absolute;
+		bottom: -1px;
+		right: 0;
+		margin: 0 (-$arrowHeadSize) 0 0;
+		width: 0; 
+		height: 0; 
+		border-left: $arrowHeadSize solid transparent;
+		border-right: $arrowHeadSize solid transparent;
+		border-top: $arrowHeadSize solid $arrowColor;
+	}
+
+	&.merge {
+		border-style: dashed;
+	}
+}
+
+.column-indicator {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	z-index: z('columnIndicator');
+	border-left: 1px dashed #ccc;
+	margin-left: $spacing + $badgeWidth / 2;
+}
+
+.show {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: $spacing;
+	background-color: rgba(navy, 0.25);
+	border: 1px solid navy;
+}

@@ -1,85 +1,190 @@
+.git-node-data,
+.git-sideview-data {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis; }
+
+.git-node:after {
+  content: "";
+  display: table;
+  clear: both; }
+
 * {
-	box-sizing: border-box;
-}
+  box-sizing: border-box; }
+
+body {
+  margin: 0; }
+
+.git-repo {
+  position: relative;
+  overflow: hidden; }
+  .git-repo h1 {
+    text-align: center; }
+  .git-repo .switch-view {
+    position: absolute;
+    top: 1em;
+    right: 1em; }
 
 .git-tree {
-	list-style: none;
-	padding: 0;
-	margin: 0;
-}
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  position: relative; }
 
 .git-node {
-	float: left;
-	clear: left;
-	position: relative;
-	margin-bottom: 2em;
-	margin-left: 2em;
-	width: 6em;
-	text-align: center;
-}
+  padding: 1em 2em;
+  white-space: nowrap;
+  perspective: 1000; }
+  .git-node.git-branch-master {
+    background-color: rgba(0, 228, 250, 0.2); }
+  .git-node.git-branch-develop {
+    background-color: rgba(255, 229, 0, 0.2); }
+  .git-node.git-branch-release {
+    background-color: rgba(76, 196, 0, 0.2); }
+  .git-node.git-branch-feature {
+    background-color: rgba(255, 108, 193, 0.2); }
+  .git-node.git-branch-hotfix {
+    background-color: rgba(254, 88, 98, 0.2); }
 
-.git-node:before {
-	display: block;
-	content: attr(id);
-	background-color: navy;
-	border: 2px solid black;
-	color: black;
-	padding: 0.5em 1em;
-	border-radius: 10px;
-}
-
-.git-branch-feature:before {
-	background-color: #ff6cc1;
-}
-
-.git-branch-dev:before {
-	background-color: #ffe500;
-}
-
-.git-branch-master:before {
-	background-color: #00e4fa;
-}
-
-.git-branch-hotfix:before {
-	background-color: #fe5862;
-}
-
-.git-branch-release:before {
-	background-color: #4cc400;
-}
+.git-node-badge {
+  position: relative;
+  z-index: 200;
+  display: inline-block;
+  padding: 0.5em;
+  text-align: center;
+  width: 4.5em;
+  margin-left: 2em;
+  border: 2px solid black;
+  border-radius: 50%;
+  cursor: pointer;
+  font-weight: bold; }
+  .git-branch-master .git-node-badge {
+    background-color: #00e4fa;
+    border-color: #005861; }
+  .git-branch-develop .git-node-badge {
+    background-color: #ffe500;
+    border-color: #665c00; }
+  .git-branch-release .git-node-badge {
+    background-color: #4cc400;
+    border-color: #112b00; }
+  .git-branch-feature .git-node-badge {
+    background-color: #ff6cc1;
+    border-color: #d20079; }
+  .git-branch-hotfix .git-node-badge {
+    background-color: #fe5862;
+    border-color: #bc010c; }
 
 .git-node-data {
-	position: absolute;
-	left: 100%;
-	margin-left: 1em;
-	opacity: 0;
-	pointer-events: none;
-	transition: opacity 0.3s ease;
-}
+  display: inline-block;
+  position: relative;
+  z-index: 210;
+  max-width: 30%;
+  vertical-align: middle;
+  line-height: 1.25;
+  border: 2px solid black;
+  border-radius: 10px;
+  padding: 0 0.5em;
+  opacity: 1;
+  transform-style: preserve-3d;
+  transform: none;
+  transform-origin: left center;
+  transition: transform 0.3s ease, opacity 0.3s ease; }
+  .sideview .git-node-data {
+    opacity: 0;
+    transform: rotateY(90deg);
+    position: absolute; }
+  .git-branch-master .git-node-data {
+    background-color: rgba(148, 246, 255, 0.75);
+    border-color: rgba(0, 88, 97, 0.75); }
+  .git-branch-develop .git-node-data {
+    background-color: rgba(255, 245, 153, 0.75);
+    border-color: rgba(102, 92, 0, 0.75); }
+  .git-branch-release .git-node-data {
+    background-color: rgba(156, 255, 94, 0.75);
+    border-color: rgba(17, 43, 0, 0.75); }
+  .git-branch-feature .git-node-data {
+    background-color: rgba(255, 255, 255, 0.75);
+    border-color: rgba(210, 0, 121, 0.75); }
+  .git-branch-hotfix .git-node-data {
+    background-color: rgba(255, 240, 241, 0.75);
+    border-color: rgba(188, 1, 12, 0.75); }
 
-.git-node:hover .git-node-data {
-	opacity: 1;
-	pointer-events: auto;
-}
+.git-sideview-data {
+  opacity: 0;
+  float: right;
+  transition: opacity 0.3s ease;
+  width: 29%;
+  position: absolute; }
+  .sideview .git-sideview-data {
+    opacity: 1;
+    position: static; }
+  .git-sideview-data .git-message {
+    white-space: normal; }
+
+.git-node-data span, .git-node-data time,
+.git-sideview-data span,
+.git-sideview-data time {
+  vertical-align: middle; }
+  .git-node-data span:before, .git-node-data time:before,
+  .git-sideview-data span:before,
+  .git-sideview-data time:before {
+    font-style: italic; }
+
+.git-node-data .git-message,
+.git-node-data .git-branch,
+.git-sideview-data .git-message,
+.git-sideview-data .git-branch {
+  display: block; }
+
+.git-node-data .git-branch:before,
+.git-sideview-data .git-branch:before {
+  content: 'branch: '; }
+
+.git-node-data .git-author:before,
+.git-sideview-data .git-author:before {
+  content: 'by: '; }
+
+.git-node-data time,
+.git-sideview-data time {
+  font-size: 0.75em; }
+  .git-node-data time:before,
+  .git-sideview-data time:before {
+    content: '@ '; }
 
 .arrow {
-	position: absolute;
-	border: 1px solid black;
-	top: 100%;
-	left: 50%;
-	z-index: 100;
-	transform-origin: top left;
-}
+  position: absolute;
+  border: 1px solid #777;
+  top: 100%;
+  left: 50%;
+  z-index: 190;
+  transform-origin: top center;
+  margin-top: 2px; }
+  .arrow:after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    right: 0;
+    margin: 0 -8px 0 0;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid #777; }
+  .arrow.merge {
+    border-style: dashed; }
 
-.arrow:after {
-	content: '';
-	position: absolute;
-	bottom: -1px;
-	right: 0;
-	margin: 0 -8px 0 0;
-	width: 0; 
-	height: 0; 
-	border-left: 8px solid transparent;
-	border-right: 8px solid transparent;
-	border-top: 8px solid black;
-}
+.column-indicator {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 50;
+  border-left: 1px dashed #ccc;
+  margin-left: 4.25em; }
+
+.show {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 2em;
+  background-color: rgba(0, 0, 128, 0.25);
+  border: 1px solid navy; }

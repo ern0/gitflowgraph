@@ -1,0 +1,20 @@
+$badgeColors: (
+	master: #00e4fa,
+	develop: #ffe500,
+	release: #4cc400,
+	feature: #ff6cc1,
+	hotfix: #fe5862
+);
+
+$arrowColor: #777;
+$arrowHeadSize: 8px;
+
+$spacing: 2em;
+$badgeWidth: 4.5em;
+
+$zIndexes: (
+	columnIndicator: 50,
+	arrow: 190,
+	data: 210,
+	badge: 200,
+);
